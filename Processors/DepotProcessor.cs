@@ -63,13 +63,13 @@ namespace SteamDatabaseBackend
             CDNServers = new List<string>();
         }
 
-        private void OnServerList(SteamClient.ServerListCallback callback)
+        private async void OnServerList(SteamClient.ServerListCallback callback)
         {
-            var serverList = new List<CDNClient.Server>();
+            IList<CDNClient.Server> serverList;
 
             try
             {
-                serverList = CDNClient.FetchServerList();
+                serverList = await CDNClient.FetchServerListAsync();
             }
             catch (Exception e)
             {
@@ -412,7 +412,7 @@ namespace SteamDatabaseBackend
                 {
                     try
                     {
-                        depotManifest = CDNClient.DownloadManifest(depot.DepotID, depot.ManifestID, depot.Server, depot.CDNToken, depot.DepotKey);
+                        depotManifest = await CDNClient.DownloadManifestAsync(depot.DepotID, depot.ManifestID, depot.Server, depot.CDNToken, depot.DepotKey);
 
                         break;
                     }
