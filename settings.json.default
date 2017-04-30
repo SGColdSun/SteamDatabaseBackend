@@ -1,10 +1,10 @@
 {
-	"ConnectionString": "server=127.0.0.1;port=3306;userid=test;password=test;database=test;charset=utf8;pooling=true",
+	"ConnectionString": "server=1.2.3.4;port=3306;userid=username;password=password;database=dbname;charset=utf8;pooling=true",
 
 	"BugsnagApiKey": null,
 
-	"RawBaseURL": "http://example.com/raw/",
-	"BaseURL": "http://example.com",
+	"RawBaseURL": "http://steamdb.info/raw/",
+	"BaseURL": "http://steamdb.info",
 	
 	"FullRun": 0,
 	"SteamKitDebug": false,
@@ -12,9 +12,9 @@
 	
 	"Steam":
 	{
-		"Username": "steam-username",
-		"Password": "steam-password",
-		"WebAPIKey": ""
+		"Username": "username",
+		"Password": "password",
+		"WebAPIKey": "webapikey"
 	},
 	
 	"GameCoordinatorIdlers":
@@ -24,24 +24,24 @@
 	
 	"IRC":
 	{
-		"Enabled": false,
-		"SSL": false,
-		"SslAcceptInvalid": false,
-		"Server": "example.com",
-		"Port": 0,
-		"Nickname": "SteamDB-Fork",
-		"Password": "",
+		"Enabled": true,
+		"SSL": true,
+		"SslAcceptInvalid": true,
+		"Server": "irc.ego.ninja",
+		"Port": 6697,
+		"Nickname": "SteamDB",
+		"Password": "chat-password",
 		"CommandPrefix": ".",
 		"PrioritySendPrefix":  "",
 		"Channel":
 		{
-			"Ops": "#steamdb-test",
-			"Main": "#steamdb-test",
-			"Announce": "#steamdb-test"
+			"Ops": "#services",
+			"Main": "#Steam",
+			"Announce": "#SteamDB"
 		},
 		"Admins":
 		[
-			"ident@host"
+			"ColdSun@ego.ninja"
 		]
 	},
 
@@ -52,11 +52,11 @@
 
 	"ChatRooms":
 	[
-		
+		103582791431509971
 	],
 
 	"SteamAdmins":
 	[
-		76561197960287930
+		76561197960270969
 	]
 }

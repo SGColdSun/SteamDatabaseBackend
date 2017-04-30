@@ -39,7 +39,7 @@ namespace SteamDatabaseBackend
 
             DbConnection = Database.GetConnection();
 
-            CurrentData = DbConnection.Query<PICSInfo>("SELECT `Name` as `KeyName`, `Value`, `Key` FROM `AppsInfo` INNER JOIN `KeyNames` ON `AppsInfo`.`Key` = `KeyNames`.`ID` WHERE `AppID` = @AppID", new { AppID }).ToDictionary(x => x.KeyName, x => x);
+            CurrentData = DbConnection.Query<PICSInfo>("SELECT `Name` as `KeyName`, `Value`, `KeyID` FROM `AppsInfo` INNER JOIN `KeyNames` ON `AppsInfo`.`KeyID` = `KeyNames`.`ID` WHERE `AppID` = @AppID", new { AppID }).ToDictionary(x => x.KeyName, x => x);
         }
 
         public void Dispose()
@@ -184,14 +184,14 @@ namespace SteamDatabaseBackend
 
                     if (ProcessKey(sectionName, sectionName, Utils.JsonifyKeyValue(section), true) && sectionName.Equals("root_depots"))
                     {
-                        DbConnection.Execute("UPDATE `Apps` SET `LastDepotUpdate` = CURRENT_TIMESTAMP() WHERE `AppID` = @AppID", new { AppID });
+                        DbConnection.Execute("UPDATE `Apps` SET `LastDepotUpdate` = unix_timestamp() WHERE `AppID` = @AppID", new { AppID });
                     }
                 }
             }
 
             foreach (var data in CurrentData.Values.Where(data => !data.Processed && !data.KeyName.StartsWith("website", StringComparison.Ordinal)))
             {
-                DbConnection.Execute("DELETE FROM `AppsInfo` WHERE `AppID` = @AppID AND `Key` = @Key", new { AppID, data.Key });
+                DbConnection.Execute("DELETE FROM `AppsInfo` WHERE `AppID` = @AppID AND `KeyID` = @Key", new { AppID, data.Key });
 
                 MakeHistory("removed_key", data.Key, data.Value);
 
@@ -294,7 +294,7 @@ namespace SteamDatabaseBackend
                     IRC.Instance.SendOps("New app keyname: {0}{1} {2}(ID: {3}) ({4}) - {5}", Colors.BLUE, keyName, Colors.LIGHTGRAY, key, displayName, SteamDB.GetAppURL(AppID, "history"));
                 }
 
-                DbConnection.Execute("INSERT INTO `AppsInfo` (`AppID`, `Key`, `Value`) VALUES (@AppID, @Key, @Value)", new { AppID, Key = key, Value = value });
+                DbConnection.Execute("INSERT INTO `AppsInfo` (`AppID`, `KeyID`, `Value`) VALUES (@AppID, @Key, @Value)", new { AppID, Key = key, Value = value });
                 MakeHistory("created_key", key, string.Empty, value);
 
                 if ((keyName == "extended_developer" || keyName == "extended_publisher") && value == "Valve")
@@ -328,7 +328,7 @@ namespace SteamDatabaseBackend
 
             if (!data.Value.Equals(value))
             {
-                DbConnection.Execute("UPDATE `AppsInfo` SET `Value` = @Value WHERE `AppID` = @AppID AND `Key` = @Key", new { AppID, Key = data.Key, Value = value });
+                DbConnection.Execute("UPDATE `AppsInfo` SET `Value` = @Value WHERE `AppID` = @AppID AND `KeyID` = @Key", new { AppID, Key = data.Key, Value = value });
                 MakeHistory("modified_key", data.Key, data.Value, value);
 
                 if (keyName == "common_oslist" && value.Contains("linux") && !data.Value.Contains("linux"))
